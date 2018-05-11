@@ -38,6 +38,42 @@ describe("Simple distribution", function() {
     expect(version).to.eql(process.version);
   });
 
+  it("should test failure exit code", async () => {
+
+    var spawn = Spawn(port);
+    var child = spawn('node', ['-p', "process.exit(42)"]);
+
+    var done = new Promise(resolve => child.once('exit', resolve));
+    var exit = await done;
+
+    console.log('All done, exit code is %d', exit);
+
+    expect(exit).to.eql(42);
+  });
+
+  it("should test failure", async () => {
+
+    var spawn = Spawn(port);
+    var child = spawn('node', ['-p', "throw 'nope'"]);
+    var stderr = '';
+    var stdout = '';
+    child.stderr.on('data', line => stderr += line);
+    child.stdout.on('data', line => stdout += line);
+
+    var done = new Promise(resolve => child.once('exit', resolve));
+    var exit = await done;
+
+    console.log('All done, exit code is %d', exit);
+
+    expect(exit).to.eql(1);
+    expect(stdout).to.eql("");
+    expect(stderr).to.match(/nope/);
+  });
+
+
+
+
+
 });
 
 

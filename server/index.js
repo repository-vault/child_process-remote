@@ -38,16 +38,15 @@ class Server {
     debug("ACK pid", payload);
     control.write(JSON.stringify(payload));
 
-    child.on('exit', function(code) {
-      var payload = {
-        type : 'event',
-        event : 'exit',
-        args : [code],
-      };
-      debug("ACK exit", payload);
-      control.end(JSON.stringify(payload));
-      client.end();
-    });
+    const fw = function(event) {
+      child.on(event, function(...args) {
+        var payload = {type : 'event', event, args};
+        debug("ACK ", event, payload);
+        control.write(JSON.stringify(payload));
+      });
+    }
+
+    fw('close'); fw('error'); fw('exit');
 
     if(child.stdout)
       child.stdout.pipe(remotestdout);
