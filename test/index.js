@@ -19,6 +19,7 @@ describe("Simple distribution", function() {
   });
 
   it("should ask for a simple argv call", async () => {
+    this.timeout(10 * 1000);
 
     var spawn = Spawn(port);
     var child = spawn('node', ['-v']);
