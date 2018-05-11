@@ -27,6 +27,7 @@ class Server {
     var control      = multi.createSharedStream('control');
     var remotestdout = multi.createStream('stdout');
     var remotestderr = multi.createStream('stderr');
+    var remotestdin  = multi.receiveStream('stdin');
 
     var data = await new Promise(resolve => control.once('data', resolve));
     data = JSON.parse(data);
@@ -38,16 +39,16 @@ class Server {
     debug("ACK pid", payload);
     control.write(JSON.stringify(payload));
 
-    const fw = function(event) {
+    ['close', 'error', 'exit'].map(function(event) {
       child.on(event, function(...args) {
         var payload = {type : 'event', event, args};
         debug("ACK ", event, payload);
         control.write(JSON.stringify(payload));
       });
-    }
+    });
 
-    fw('close'); fw('error'); fw('exit');
-
+    if(child.stdin)
+      remotestdin.pipe(child.stdin);
     if(child.stdout)
       child.stdout.pipe(remotestdout);
     if(child.stderr)
