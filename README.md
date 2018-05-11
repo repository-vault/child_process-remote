@@ -10,7 +10,6 @@
 
 
 
-
 Execute a remote process throught a remote TCP (http) endoint
 
 
@@ -18,7 +17,7 @@ Execute a remote process throught a remote TCP (http) endoint
 
 ```client.js
 //assume server is running on 
-var spawn = require('remote-cp/spawn')('127.0.0.1', 8080);
+var spawn = require('remote-cp/spawn')(8080);
 
 var version = '';
 var child = spawn('node', ['-v']);
