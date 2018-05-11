@@ -23,7 +23,7 @@ describe("Simple distribution", function() {
   it("should ask for a simple argv call", async () => {
 
     var spawn = Spawn(port);
-    var child = spawn('node', ['-v']);
+    var child = spawn('node', ['-v'], {stdio : ['ignore', 'pipe', 'ignore']});
 
     var done = new Promise(resolve => child.once('exit', resolve));
     var body = new Promise(resolve => child.stdout.once('data', resolve));

@@ -32,7 +32,7 @@ class Server {
     data = JSON.parse(data);
     debug("Got payload", data);
 
-    var child = spawn(data.cmd, data.args);
+    var child = spawn(...data.query);
 
     var payload = { type : 'pid', pid : child.pid };
     debug("ACK pid", payload);
@@ -49,8 +49,10 @@ class Server {
       client.end();
     });
 
-    child.stdout.pipe(remotestdout);
-    child.stderr.pipe(remotestderr);
+    if(child.stdout)
+      child.stdout.pipe(remotestdout);
+    if(child.stderr)
+      child.stderr.pipe(remotestderr);
   }
 }
 

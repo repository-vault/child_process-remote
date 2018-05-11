@@ -15,7 +15,7 @@ class RemoteProcess extends EventEmitter {
 
 const createClient = (...remote) => {
 
-  return function(cmd, args)  {
+  return function(...query)  {
 
     const multi = multiplex();
 
@@ -28,7 +28,7 @@ const createClient = (...remote) => {
 
     var control = multi.createSharedStream('control');
 
-    var payload = { cmd, args };
+    var payload = {query};
     debug('Send payload', payload);
 
     control.write(JSON.stringify(payload));
