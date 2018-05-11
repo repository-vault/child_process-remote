@@ -1,6 +1,6 @@
 {
   "name": "child_process-remote",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "child_process spawn over TCP",
   "main": "spawn.js",
   "scripts": {
