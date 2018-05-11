@@ -25,10 +25,11 @@ describe("Simple distribution", function() {
     var spawn = Spawn(port);
     var child = spawn('node', ['-v']);
 
-    var version = await new Promise(resolve => child.stdout.once('data', resolve));
-    version = String(version).trim();
+    var done = new Promise(resolve => child.once('exit', resolve));
+    var body = new Promise(resolve => child.stdout.once('data', resolve));
 
-    var exit = await new Promise(resolve => child.once('exit', resolve));
+    var version = String(await body).trim();
+    var exit = await done;
 
     console.log("Got pid", child.pid);
     console.log('All done, version is %s , exit code is %d', version, exit);
