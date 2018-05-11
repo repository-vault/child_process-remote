@@ -4,7 +4,7 @@ const net = require('net');
 const spawn = require('child_process').spawn;
 
 const multiplex = require('multiplex');
-
+const debug  = require('debug')('remote-cp:server');
 
 class Server {
 
@@ -17,6 +17,8 @@ class Server {
   }
 
   async incoming(client) {
+    debug("new tcp client");
+
     const  multi = multiplex();
 
     client.pipe(multi);
@@ -27,12 +29,13 @@ class Server {
     var remotestderr = multi.createStream('stderr');
 
     var data = await new Promise(resolve => control.once('data', resolve));
-
     data = JSON.parse(data);
+    debug("Got payload", data);
 
     var child = spawn(data.cmd, data.args);
 
     var payload = { type : 'pid', pid : child.pid };
+    debug("ACK pid", payload);
     control.write(JSON.stringify(payload));
 
     child.on('exit', function(code) {
@@ -41,6 +44,7 @@ class Server {
         event : 'exit',
         args : [code],
       };
+      debug("ACK exit", payload);
       control.end(JSON.stringify(payload));
       client.end();
     });

@@ -7,7 +7,8 @@
     "eslint": "eslint server spawn.js test",
     "checkall": "npm run eslint",
     "mocha": "node node_modules/mocha/bin/_mocha",
-    "test": "node node_modules/istanbul/lib/cli.js cover --report text-summary --report html --report lcov  node_modules/mocha/bin/_mocha --",
+    "test": "npm run eslint && npm run cover",
+    "cover": "node node_modules/istanbul/lib/cli.js cover --report text-summary --report html --report lcov  node_modules/mocha/bin/_mocha --",
     "coveralls": "npm install coveralls && node ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info"
   },
   "repository": {
@@ -26,12 +27,13 @@
   },
   "homepage": "https://github.com/131/remote-cp#readme",
   "dependencies": {
+    "debug": "^2.3.2",
     "multiplex": "^6.7.0"
   },
   "devDependencies": {
+    "eslint-plugin-ivs": "^1.0.7",
     "expect.js": "^0.3.1",
     "istanbul": "^1.1.0-alpha.1",
-    "eslint-plugin-ivs": "^1.0.7",
     "mocha": "^3.1.2"
   }
 }

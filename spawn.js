@@ -3,6 +3,8 @@
 const net = require('net');
 const EventEmitter = require('events');
 const multiplex = require('multiplex');
+const debug  = require('debug')('remote-cp:client');
+
 
 class RemoteProcess extends EventEmitter {
   constructor(props) {
@@ -18,7 +20,7 @@ const createClient = (...remote) => {
     const multi = multiplex();
 
     var lnk = net.connect(...remote, function() {
-
+      debug('Connected to', ...remote);
     });
 
     lnk.pipe(multi);
@@ -27,6 +29,7 @@ const createClient = (...remote) => {
     var control = multi.createSharedStream('control');
 
     var payload = { cmd, args };
+    debug('Send payload', payload);
 
     control.write(JSON.stringify(payload));
 
