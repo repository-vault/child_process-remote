@@ -1,9 +1,8 @@
 {
   "name": "remote-cp",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "child_process spawn over TCP",
   "main": "spawn.js",
-
   "scripts": {
     "eslint": "eslint server spawn.js test",
     "checkall": "npm run eslint",
@@ -11,8 +10,6 @@
     "test": "node node_modules/istanbul/lib/cli.js cover --report text-summary --report html --report lcov  node_modules/mocha/bin/_mocha --",
     "coveralls": "npm install coveralls && node ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info"
   },
-
-
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/131/remote-cp.git"
@@ -31,12 +28,10 @@
   "dependencies": {
     "multiplex": "^6.7.0"
   },
-
   "devDependencies": {
     "expect.js": "^0.3.1",
     "istanbul": "^1.1.0-alpha.1",
     "eslint-plugin-ivs": "^1.0.7",
     "mocha": "^3.1.2"
   }
-
 }
