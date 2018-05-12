@@ -44,7 +44,6 @@ const createClient = (...remote) => {
       },
       pid    : 0,
     });
-
     control.on('data', function(data) {
       data = JSON.parse(data);
 
@@ -53,9 +52,19 @@ const createClient = (...remote) => {
       if(data.type == 'event')
         rp.emit(data.event, ...data.args);
     });
-    rp.on('exit', function() {
+    rp.once('exit', function() {
+      rp._exited  = true;
       lnk.end();
     });
+
+    lnk.on('close', function() {
+      if(rp._exited)
+        return;
+      rp.emit('exit', null);
+      rp.emit('close');
+    });
+
+
     return rp;
   };
 };

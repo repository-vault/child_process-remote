@@ -12,8 +12,9 @@ const isWSL = os.platform() == "linux" && /microsoft/i.test(os.release());
 
 describe("Simple distribution", function() {
   var port = 8080;
+  var server;
   it("should start a server", function(done) {
-    var server = new Server();
+    server = new Server();
     server.listen(port, function() {
       console.log("Server is now ready");
       done();
@@ -93,23 +94,22 @@ describe("Simple distribution", function() {
     expect(exit).to.eql(42);
   });
 
-  it("should test failure", async () => {
+
+
+
+  it("Should exit on server failure", async () => {
 
     var spawn = Spawn(port);
-    var child = spawn('node', ['-p', "throw 'nope'"]);
-    var stderr = '';
-    var stdout = '';
-    child.stderr.on('data', line => stderr += line);
-    child.stdout.on('data', line => stdout += line);
+    var child = spawn('node');
 
     var done = new Promise(resolve => child.once('exit', resolve));
+
+    setTimeout(server.destroy.bind(server), 1000);
     var exit = await done;
 
     console.log('All done, exit code is %d', exit);
 
-    expect(exit).to.eql(1);
-    expect(stdout).to.eql("");
-    expect(stderr).to.match(/nope/);
+    expect(exit).to.eql(null);
   });
 
 

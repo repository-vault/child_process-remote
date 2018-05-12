@@ -9,14 +9,20 @@ const debug  = require('debug')('remote-cp:server');
 class Server {
 
   constructor() {
-    this.server = net.createServer(this.incoming);
+    this.server = net.createServer(this.incoming.bind(this));
   }
 
   listen(...listener) {
     this.server.listen(...listener);
   }
 
+  destroy() {
+    this.server.emit('destroy');
+    this.server.close();
+  }
+
   async incoming(client) {
+    this.server.on('destroy', client.destroy.bind(client));
     debug("new tcp client");
 
     const  multi = multiplex();
