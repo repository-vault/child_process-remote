@@ -37,6 +37,11 @@ const createClient = (...remote) => {
       stdout : multi.receiveStream('stdout'),
       stderr : multi.receiveStream('stderr'),
       stdin  : multi.createStream('stdin'),
+      kill   : (signal) => {
+        var payload = {type : 'kill', signal};
+        debug('Send payload', payload);
+        control.write(JSON.stringify(payload));
+      },
       pid    : 0,
     });
 

@@ -39,6 +39,13 @@ class Server {
     debug("ACK pid", payload);
     control.write(JSON.stringify(payload));
 
+    control.on('data', function(data) {
+      data = JSON.parse(data);
+      debug("Got payload", data);
+      if(data.type == 'kill')
+        child.kill(data.signal);
+    });
+
     ['close', 'error', 'exit'].map(function(event) {
       child.on(event, function(...args) {
         var payload = {type : 'event', event, args};

@@ -65,6 +65,20 @@ describe("Simple distribution", function() {
     expect(stderr).to.eql("");
   });
 
+  it("should test kill", async () => {
+
+    var spawn = Spawn(port);
+    var child = spawn('node', ['-e', "setInterval(function(){}, 1000)"]);
+    setTimeout(child.kill, 1000);
+
+    var done = new Promise(resolve => child.once('exit', (...exit) => resolve(exit)));
+    var exit = await done;
+
+    console.log('All done, exit code is %d', exit);
+    expect(exit).to.eql([null, 'SIGTERM']);
+  });
+
+
 
   it("should test failure exit code", async () => {
 
