@@ -53,7 +53,9 @@ const createClient = (...remote) => {
       if(data.type == 'event')
         rp.emit(data.event, ...data.args);
     });
-
+    rp.on('exit', function() {
+      lnk.end();
+    });
     return rp;
   };
 };
