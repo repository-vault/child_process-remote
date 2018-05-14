@@ -1,6 +1,6 @@
 "use strict";
 
-const net = require('net');
+const guid = () => Math.random().toString(16);
 const EventEmitter = require('events');
 const multiplex = require('multiplex');
 const debug  = require('debug')('remote-cp:client');
@@ -13,15 +13,14 @@ class RemoteProcess extends EventEmitter {
   }
 }
 
-const createClient = (...remote) => {
+const createClient = (stream, readable) => {
+  const  armor = multiplex();
+  (readable || stream).pipe(armor);
+  armor.pipe(stream);
 
   return function(...query)  {
-
+    const lnk  = armor.createStream(guid());
     const multi = multiplex();
-
-    var lnk = net.connect(...remote, function() {
-      debug('Connected to', ...remote);
-    });
 
     lnk.pipe(multi);
     multi.pipe(lnk);
@@ -57,7 +56,7 @@ const createClient = (...remote) => {
       lnk.end();
     });
 
-    lnk.on('close', function() {
+    stream.on('close', function() {
       if(rp._exited)
         return;
       rp.emit('exit', null);

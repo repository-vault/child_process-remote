@@ -1,7 +1,7 @@
 "use strict";
 
 /* eslint-env node,mocha */
-
+const net = require('net');
 const expect = require('expect.js');
 
 const Server = require('../server');
@@ -11,21 +11,38 @@ const os = require('os');
 const isWSL = os.platform() == "linux" && /microsoft/i.test(os.release());
 
 describe("Simple distribution", function() {
-  var port = 8080;
+  var port = -1;
   var server;
+  var client;
+  var spawn;
+
+
+  this.timeout(10 * 1000);
+
   it("should start a server", function(done) {
-    server = new Server();
-    server.listen(port, function() {
+
+    server = net.createServer(Server);
+
+    server.listen(function() {
+      port = this.address().port;
       console.log("Server is now ready");
       done();
     });
   });
 
-  this.timeout(10 * 1000);
+
+  it("client should connect to the server", function(done) {
+    client = net.connect(port, function() {
+      console.log('Connected to', port);
+      spawn = Spawn(client);
+      done();
+    });
+
+  });
+
+
 
   it("should ask for a simple argv call", async () => {
-
-    var spawn = Spawn(port);
     var child = spawn('node', ['-v'], {stdio : ['ignore', 'pipe', 'ignore']});
 
     var done = new Promise(resolve => child.once('exit', resolve));
@@ -47,7 +64,6 @@ describe("Simple distribution", function() {
       return;
     }
 
-    var spawn = Spawn(port);
     var child = spawn('node', ['-e', "process.stdin.pipe(process.stdout)"]);
     var stderr = '';
     var stdout = '';
@@ -67,8 +83,6 @@ describe("Simple distribution", function() {
   });
 
   it("should test kill", async () => {
-
-    var spawn = Spawn(port);
     var child = spawn('node', ['-e', "setInterval(function(){}, 1000)"]);
     setTimeout(child.kill, 1000);
 
@@ -83,7 +97,6 @@ describe("Simple distribution", function() {
 
   it("should test failure exit code", async () => {
 
-    var spawn = Spawn(port);
     var child = spawn('node', ['-p', "process.exit(42)"]);
 
     var done = new Promise(resolve => child.once('exit', resolve));
@@ -99,18 +112,22 @@ describe("Simple distribution", function() {
 
   it("Should exit on server failure", async () => {
 
-    var spawn = Spawn(port);
     var child = spawn('node');
 
     var done = new Promise(resolve => child.once('exit', resolve));
 
-    setTimeout(server.destroy.bind(server), 1000);
+    setTimeout(function() {
+      client.destroy();
+      console.log("Should destroy client");
+    }, 1000);
     var exit = await done;
 
     console.log('All done, exit code is %d', exit);
 
     expect(exit).to.eql(null);
   });
+
+
 
 
 

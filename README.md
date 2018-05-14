@@ -8,14 +8,26 @@
 
 # Motivation
 
-Execute a remote process throught a remote TCP endoint
+Execute a process through a remote endoint
 
 
 # API
 
+
+```server.js
+const net = require('net');
+const Server = require('child_process-remote/server');
+
+var server = net.createServer(Server);
+server.listen(8080, function() {
+  console.log("Server is now ready");
+});
+```
+
 ```client.js
-//assume server is running on 
-var spawn = require('child_process-remote/spawn')(8080);
+//assume server is running 
+const net   = require('net');
+const spawn = require('child_process-remote/spawn')(net.connect(8080));
 
 var version = '';
 var child = spawn('node', ['-v']);
@@ -28,13 +40,6 @@ child.on('close', function(exit) {
 });
 ```
 
-```server.js
-var Server = require('child_process-remote/server');
-var server = new Server();
-server.listen(8080, function() {
-  console.log("Server is now ready");
-});
-```
 
 
 
