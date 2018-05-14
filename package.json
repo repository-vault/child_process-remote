@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/131/remote-cp.git"
+    "url": "git+ssh://git@github.com/131/child_process-remote.git"
   },
   "keywords": [
     "child_process",
@@ -23,9 +23,9 @@
   "author": "131 <131.js@cloudyks.org>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/131/remote-cp/issues"
+    "url": "https://github.com/131/child_process-remote/issues"
   },
-  "homepage": "https://github.com/131/remote-cp#readme",
+  "homepage": "https://github.com/131/child_process-remote#readme",
   "dependencies": {
     "debug": "^2.3.2",
     "multiplex": "^6.7.0"
